@@ -1,5 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 import '../shared_widgets/custom_appbar.dart';
 import '../shared_widgets/rectangle_button.dart';
@@ -29,11 +30,17 @@ class ContactFormState extends State<ContactFormPage> {
   final Map<String, String?> _formData = {'email': null, 'message': null};
   bool _isEnabled = true;
 
-  Future<void> submitForm(Map<String, String?> formData) {
-    // TODO implement connection to microservice and replace placeholder below
-    return Future.delayed(const Duration(seconds: 2), () {
-      // print(formData);
-    });
+  Future<Response> submitForm(Map<String, String?> formData) {
+    final query = """
+{
+  sendMessage(emailAddress: "${formData['email']}", message: "${formData['message']}") {
+    status
+    message
+  }
+}""";
+
+    // TODO change url with production url once deployed. Url below is for AVD emulator when microservice is run as localhost.
+    return get(Uri.parse('http://10.0.2.2:8000/?query=$query'));
   }
 
   @override
@@ -153,7 +160,7 @@ class ContactFormState extends State<ContactFormPage> {
         ),
       );
 
-      final future = submitForm(_formData);
+      final Future<Response> future = submitForm(_formData);
 
       // Handle the success or failure of the form submission.
       future.then((value) {
