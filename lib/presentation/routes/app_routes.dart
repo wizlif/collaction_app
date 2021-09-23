@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 
+import '../authentication/auth_screen.dart';
 import '../authentication/register_phone_number_screen.dart';
 import '../authentication/verify_code_screen.dart';
 import '../contact_form/contact_form_screen.dart';
@@ -21,6 +22,7 @@ import '../onboarding/onboarding.dart';
     AutoRoute(page: ComponentsDemoPage),
     AutoRoute(page: OnboardingPage),
     AutoRoute(page: CrowdActionDetailsPage),
+    AutoRoute(page: AuthPage),
     AutoRoute(page: DemoPage),
   ],
 )
