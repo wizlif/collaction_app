@@ -60,7 +60,7 @@ class DemoPage extends StatelessWidget {
                       child: RectangleButton(
                         text: "Onboarding",
                         onTap: () =>
-                            context.router.push(const OnboardingRoute()),
+                            context.router.push(const OnBoardingRoute()),
                       ),
                     ),
                   ],

@@ -1,19 +1,20 @@
-// TODO: Route to this screen if first time user
 import 'package:auto_route/auto_route.dart';
+import 'package:collaction_app/application/splash/splash_bloc.dart';
+import 'package:collaction_app/presentation/routes/app_routes.gr.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../shared_widgets/rectangle_button.dart';
 import '../themes/constants.dart';
 
-class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({Key? key}) : super(key: key);
+class OnBoardingPage extends StatefulWidget {
+  const OnBoardingPage({Key? key}) : super(key: key);
 
   @override
-  _OnboardingPageState createState() => _OnboardingPageState();
+  _OnBoardingPageState createState() => _OnBoardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> {
+class _OnBoardingPageState extends State<OnBoardingPage> {
   final PageController _imageController = PageController();
   final PageController _textController = PageController();
   double currentPage = 0;
@@ -48,14 +49,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     ];
     final titlePages = [
-      "Idea",
+      "Goal",
       "Crowd",
       "Action",
     ];
     final textPages = [
-      "Propose a collective action and set a target number of participants",
-      "People pledge to take action if the target is met before the deadline",
-      "If enough people commit, we all act!",
+      "Choose or suggest a challenge you want to participate in",
+      "See how your actions are amplified by a crowd with similar goals",
+      "Commit to the challenge and make impact",
     ];
 
     return Scaffold(
@@ -78,15 +79,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ],
             ),
           ),
-          Container(
+          SizedBox(
             height: MediaQuery.of(context).size.height *
                 (scaleFactor == 1.0 ? 0.45 : 0.46),
             width: double.infinity,
-            decoration: const BoxDecoration(
+            /*decoration: const BoxDecoration(
                 color: kAlmostTransparent,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(25.0),
-                    topRight: Radius.circular(25.0))),
+                    topRight: Radius.circular(25.0))),*/
             child: SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -130,7 +131,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       position: currentPage,
                       dotsCount: 3,
                       decorator: const DotsDecorator(
-                          activeColor: kPrimaryColor400,
+                          activeColor: kAccentColor,
+                          color: kSecondaryTransparent,
                           size: Size(12, 12),
                           activeSize: Size(12, 12)),
                     ),
@@ -138,30 +140,35 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: RectangleButton(
-                            text: currentPage == 2.0 ? "Get started" : "Next",
-                            onTap: () =>
-                                currentPage == 2.0 ? getStarted() : nextPage(),
+                          child: FloatingActionButton(
+                            child: const Icon(Icons.chevron_right),
+                            onPressed: () =>
+                                currentPage == 2.0 ? _getStarted() : nextPage(),
                           ),
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () => context.router.pop(),
-                            child: const Text(
-                              "Skip onboarding",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  color: kPrimaryColor300,
-                                  decoration: TextDecoration.underline),
+                    if (currentPage != 2)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: _getStarted,
+                              child: const Text(
+                                "Skip",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: kAccentColor,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    )
+                        ],
+                      )
+                    else
+                      const SizedBox(
+                        height: 50,
+                      ),
                   ],
                 ),
               ),
@@ -179,8 +186,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
         duration: const Duration(milliseconds: 400), curve: Curves.easeIn);
   }
 
-  void getStarted() {
-    // TODO: Replace with authentication route ( context.router.replace(AuthenticationRoute); ) - => and arrow function
-    context.router.popUntilRoot();
+  void _getStarted() {
+    context.read<SplashBloc>().add(
+      const SplashEvent.setOnBoarding(
+          isOnBoarded: true),
+    );
+
+    context.router.replaceAll([
+      const HomeRoute()
+    ]);
   }
 }

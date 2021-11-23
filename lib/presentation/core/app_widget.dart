@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../application/auth/auth_bloc.dart';
+import '../../application/splash/splash_bloc.dart';
 import '../../infrastructure/core/injection.dart';
 import '../routes/app_routes.gr.dart';
 import '../themes/themes.dart';
@@ -14,6 +15,10 @@ class AppWidget extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => getIt<AuthBloc>()),
+        BlocProvider(
+          create: (_) =>
+              getIt<SplashBloc>()..add(const SplashEvent.checkIfOnboarded()),
+        ),
       ],
       child: MaterialApp.router(
         color: Colors.white,
